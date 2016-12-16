@@ -27,7 +27,7 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## Credits
 
-Thanks to the book "Modern PHP" that teaches me new features and good practices of modern PHP programming.
+Thanks to the book [Modern PHP](https://www.amazon.com/Modern-PHP-Features-Good-Practices-ebook/dp/B00TKVLL26/ref=mt_kindle?_encoding=UTF8&me=) that teaches me new features and good practices of modern PHP programming.
 
 ## License
 
