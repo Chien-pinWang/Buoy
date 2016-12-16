@@ -6,7 +6,7 @@ use App\Buoy;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-const LOG_FILE = '/Users/cpw/tmp/Buoy.log';
+const LOG_FILE = __DIR__ . '/tmp/Buoy.log';
 const LATEST_X_HOURS = 8;
 
 $northernBuoys = ['C6AH2', '46694A', '46708A'];
