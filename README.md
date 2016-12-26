@@ -4,14 +4,19 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## Installation
 
-- <code>git clone</code> this project to your local file directory
-- Run <code>composer install</code> to get required components from Packagist.
+- `git clone` this project to your local file directory
+- Run `composer install` to get required components from Packagist.
 
 ## Usage
 
-- At project folder root, run <code>php index.php</code> to report the buoys at northern Taiwan.
-- An optional command line argument <code>php index.php S</code> reports the buoys at southern Taiwan.
+- At project folder root, run `php index.php` to report the buoys at northern Taiwan.
+- An optional command line argument `php index.php S` reports the buoys at southern Taiwan.
 - Buoy data of the last 3 hours are printed, along with the stats (average, max, min, and trend) of the last 8-hour data (wave height, sea temperature, and air temperature) are printed to stdout.
+
+## To-do's
+
+- Add documentations to the source code.
+- Add [league/climate](https://packagist.org/packages/league/climate) package to enhance input and output formats.
 
 ## Contributing
 
@@ -27,8 +32,28 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## Credits
 
-Thanks to the book [Modern PHP](https://www.amazon.com/Modern-PHP-Features-Good-Practices-ebook/dp/B00TKVLL26/ref=mt_kindle?_encoding=UTF8&me=) that teaches me new features and good practices of modern PHP programming.
+- Buoy data is provided by the [real-time marine conditions](http://cwb.gov.tw/V7/observe/marine/) of the [Central Weather Bureau](http://cwb.gov.tw) of Taiwan.
+- Thanks to the book [Modern PHP](https://www.amazon.com/Modern-PHP-Features-Good-Practices-ebook/dp/B00TKVLL26/ref=mt_kindle?_encoding=UTF8&me=) that teaches me new features and good practices of modern PHP programming.
 
 ## License
 
-MIT.
+Copyright © 2016 Chien-pin Wang <Wang.ChienPin@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
