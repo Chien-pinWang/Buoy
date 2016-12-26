@@ -7,18 +7,51 @@ use App\BuoyRecord;
 
 class Buoy
 {
+    /**
+     * Buoy ID as specified at CWB web site
+     *
+     * @var string $buoyID 
+     */
     private $buoyID;
+
+    /**
+     * Name of the buoy station
+     *
+     * @var string $buoyName
+     */
     private $buoyName;
+
+    /**
+     * Buoy data fetched from CWB web page, BuoyRecord objects
+     *
+     * @var array $buoyRecords
+     */
     private $buoyRecords = array();
 
     const BUOY_URL_PREFIX = 'http://www.cwb.gov.tw/V7/marine/sea_condition/cht/tables/';
+
+    // Fetch the most recent MAX_RECORDS (MAX_RECORDS <= 72)
     const MAX_RECORDS = 24;
 
+    /**
+     * Buoy object constructor that instantiates a Buoy object by BuoyID
+     *
+     * Constructor tries to fetch data from CWB web site and load
+     * buoyRecords if connected successfully. Throw an exception if 
+     * network is not availabe or the URL has been changed.
+     *
+     * @return Buoy
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
     public function __construct($buoyID) 
     {
         $this->buoyID = $buoyID;
         $buoyURL = Buoy::BUOY_URL_PREFIX . $this->buoyID . '.html';
 
+        // Suppress PHP connection failure warning by setting error
+        // handler with a null function and test connectivity to the
+        // URL. This is to prevent simple_html_dom being fooled by
+        // checking the latest PHP error.
         set_error_handler(function (){
         
         }, E_ALL);
@@ -33,6 +66,12 @@ class Buoy
         }
     }
 
+    /**
+     * Getter function for buoy name
+     *
+     * @return string
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
     public function getBuoyName()
     {
         if ($this->buoyName) {
@@ -42,6 +81,15 @@ class Buoy
         }
     }
 
+    /**
+     * Load buoyRecords with data from CWB web site.
+     *
+     * Buoy data is fetched and parsed to BuoyRecord object and
+     * added to the buoyRecords array.
+     *
+     * @return void
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
     public function loadBuoyRecords(simple_html_dom $html)
     {
         for ($i = 2; $i < Buoy::MAX_RECORDS + 2; $i++) {
@@ -64,16 +112,28 @@ class Buoy
 
         }
 
+        // clear the simple_dom_html object to free up memory
         $html->clear();
     }
 
+    /**
+     * Report the latest X hour buoy data and trend
+     *
+     * Report the latest 3 hour buoy data
+     * Analyze trends of 浪高, 海溫, 氣溫
+     *
+     * @return string
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
     public function getBuoyReport($count)
     {
+        // Report the latest $count hours of buoy data
         $report = '';
         for ($i = 0; $i < 3; $i++) {
             $report .= $this->buoyRecords[$i]->getBuoyRecord() . PHP_EOL;
         }
         $report .= '最近 ' . $count . ' 小時';
+
         // Get stats of the wave height
         $stats = $this->getStats($count, 'recWaveHeight');
         $report .= '浪高平均 ' . $stats['avg'] . '米; 最大 ' .$stats['max'] . '米; 最小 ' . $stats['min'] . '米; ';
@@ -109,6 +169,15 @@ class Buoy
         return $report;
     }
 
+    /**
+     * Analyze the trend of a specific attribute
+     *
+     * Calculate the min, max, average, and change direction of a given
+     * attribute. An associate array of the stats is returned.
+     *
+     * @return array
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
     private function getStats($count, $attribute) 
     {
         $min = 0;

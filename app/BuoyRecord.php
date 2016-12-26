@@ -6,20 +6,103 @@ use App\Buoy;
 
 class BuoyRecord
 {
+    /**
+     * The Buoy object this record associates with
+     *
+     * @var Buoy
+     */
     private $buoy;
+
+    /**
+     * Date/Time of this record
+     *
+     * @var DateTime
+     */
     public $recDateTime;
+
+    /**
+     * 浪高 (公尺)
+     *
+     * @var float
+     */
     public $recWaveHeight;
+
+    /**
+     * 浪向
+     *
+     * @var string
+     */
     public $recWaveDirection;
+
+    /**
+     * 波浪週期 (秒)
+     *
+     * @var float
+     */
     public $recWavePeriod;
+
+    /**
+     * 風力 (公尺/秒)
+     *
+     * @var float
+     */
     public $recWindSpeed;
+
+    /**
+     * 風力 (級)
+     *
+     * @var string
+     */
     public $recWindSpeedCategory;
+
+    /**
+     * 風向
+     *
+     * @var string
+     */
     public $recWindDirection;
+
+    /**
+     * 陣風 (公尺/秒)
+     *
+     * @var float
+     */
     public $recGustSpeed;
+
+    /**
+     * 陣風 (級)
+     *
+     * @var string
+     */
     public $recGustSpeedCategory;
+
+    /**
+     * 海溫 (攝氏, 度)
+     *
+     * @var float
+     */
     public $recSeaTemperature;
+
+    /**
+     * 氣溫 (攝氏, 度)
+     *
+     * @var float
+     */
     public $recAirTemperature;
+
+    /**
+     * 氣壓 (百帕)
+     *
+     * @var float
+     */
     public $recAirPressure;
 
+    /**
+     * BuoyRecord object constructor that instantiates the Buoyrecord object
+     *
+     * @return BuoyRecord
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
     public function __construct(Buoy &$buoy, $recDate, $recTime, $recWaveHeight, $recWaveDirection, $recWavePeriod, $recWindSpeed, $recWindSpeedCategory, $recWindDirection, $recGustSpeed, $recGustSpeedCategory, $recSeaTemperature, $recAirTemperature, $recAirPressure)
     {
         $this->buoy = $buoy;
@@ -36,8 +119,18 @@ class BuoyRecord
         $this->recSeaTemperature = $recSeaTemperature;
         $this->recAirTemperature = $recAirTemperature;
         $this->recAirPressure = $recAirPressure;
+
+        return $this;
     }
 
+    /**
+     * Display selected buoy record
+     *
+     * Now include 日期, 時間, 浪高, 浪向, 週期, 風力, 海溫, 氣溫
+     *
+     * @return string
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
     public function getBuoyRecord()
     {
         $message = '';
