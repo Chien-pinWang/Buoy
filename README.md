@@ -15,7 +15,6 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## To-do's
 
-- Let index.php handle all the display rather than the get functions in class
 
 ## Contributing
 
@@ -27,6 +26,7 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## History
 
+12/26/2016 1.2.0 Buoy results in table format.
 12/26/2016 1.1.0 Enhanced user interface.
 12/16/2016 1.0.0 First release.
 
