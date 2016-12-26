@@ -10,13 +10,12 @@ Buoy is a command line application that reports and analyze data collected by bu
 ## Usage
 
 - At project folder root, run `php index.php` to report the buoys at northern Taiwan.
-- An optional command line argument `php index.php S` reports the buoys at southern Taiwan.
+- A list of available buoy station names is presented. Use <space> key to select the stations of interest; <return> key to start the program.
 - Buoy data of the last 3 hours are printed, along with the stats (average, max, min, and trend) of the last 8-hour data (wave height, sea temperature, and air temperature) are printed to stdout.
 
 ## To-do's
 
-- Add documentations to the source code.
-- Add [league/climate](https://packagist.org/packages/league/climate) package to enhance input and output formats.
+- Let index.php handle all the display rather than the get functions in class
 
 ## Contributing
 
@@ -28,7 +27,8 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## History
 
-12/16/2016 First release.
+12/26/2016 1.1.0 Enhanced user interface.
+12/16/2016 1.0.0 First release.
 
 ## Credits
 
