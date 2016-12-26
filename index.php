@@ -35,7 +35,10 @@ for ($i = 0; $i < count($buoys); $i++) {
     try {
         $buoy = new Buoy($buoys[$i]);
         $CLI->lightGreen($buoy->getBuoyName());
-        $CLI->out($buoy->getBuoyReport(LATEST_X_HOURS));
+        // 1.2.0: Use getBuoyReportArray(LATEST_X_HOURS) to get report in 
+        // array so the report can be displayed by $CLI->table formation
+        // $CLI->out($buoy->getBuoyReport(LATEST_X_HOURS));
+        $CLI->table($buoy->getBuoyReportArray(LATEST_X_HOURS));
         $buoyLog->info('Successfully reported buoy info for ' . $buoy->getBuoyName(), array('buoyID' => $buoys[$i]));
     } catch (\Exception $e) {
         $CLI->red('錯誤: 無法取得浮標編號 ' . $buoys[$i] . ' 資料!');

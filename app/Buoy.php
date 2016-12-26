@@ -119,6 +119,9 @@ class Buoy
     /**
      * Report the latest X hour buoy data and trend
      *
+     * DEPRECATED (1.2.0): 
+     * Use getBuoyReportArray($count) instead to avoid formatting results
+     *
      * Report the latest 3 hour buoy data
      * Analyze trends of 浪高, 海溫, 氣溫
      *
@@ -165,6 +168,77 @@ class Buoy
             $report .= '目前正在降溫中';
         }
         unset($status);
+
+        return $report;
+    }
+
+    /**
+     * 
+     * Report the latest X hour buoy data and trend
+     *
+     * Report the latest 3 hour buoy data
+     * Analyze trends of 浪高, 海溫, 氣溫
+     *
+     * @return array
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
+    function getBuoyReportArray($count)
+    {
+        // Report the latest $count hours of buoy data
+        $report = array();
+        for ($i = 0; $i < 3; $i++) {
+            $report[] = $this->buoyRecords[$i]->getBuoyRecordArray();
+        }
+
+        // Get stats of the wave height
+        $statsWaveHeight = $this->getStats($count, 'recWaveHeight');
+        $statsSeaTemperature= $this->getStats($count, 'recSeaTemperature');
+        $statsAirTemperature= $this->getStats($count, 'recAirTemperature');
+        $report[] = [
+            '時間' => '近8小時趨勢',
+            '浪高/米' => '',
+            '浪向' => '',
+            '週期/秒' => '',
+            '風力/級' => '',
+            '海溫/度C' => '',
+            '氣溫/度C' => ''
+        ];
+        $report[] = [
+            '時間' => '平均',
+            '浪高/米' => $statsWaveHeight['avg'],
+            '浪向' => '',
+            '週期/秒' => '',
+            '風力/級' => '',
+            '海溫/度C' => $statsSeaTemperature['avg'],
+            '氣溫/度C' => $statsAirTemperature['avg']
+        ];
+        $report[] = [
+            '時間' => '最大',
+            '浪高/米' => $statsWaveHeight['max'],
+            '浪向' => '',
+            '週期/秒' => '',
+            '風力/級' => '',
+            '海溫/度C' => $statsSeaTemperature['max'],
+            '氣溫/度C' => $statsAirTemperature['max']
+        ];
+        $report[] = [
+            '時間' => '最小',
+            '浪高/米' => $statsWaveHeight['min'],
+            '浪向' => '',
+            '週期/秒' => '',
+            '風力/級' => '',
+            '海溫/度C' => $statsSeaTemperature['min'],
+            '氣溫/度C' => $statsAirTemperature['min']
+        ];
+        $report[] = [
+            '時間' => '趨勢',
+            '浪高/米' => $statsWaveHeight['trend'],
+            '浪向' => '',
+            '週期/秒' => '',
+            '風力/級' => '',
+            '海溫/度C' => $statsSeaTemperature['trend'],
+            '氣溫/度C' => $statsAirTemperature['trend']
+        ];
 
         return $report;
     }
@@ -219,9 +293,9 @@ class Buoy
         }
 
         if ($increase >= $decrease) {
-            $trend = '+';
+            $trend = '漸增';
         } else {
-            $trend = '-';
+            $trend = '漸減';
         }
 
         $stats = array('min' => $min, 'max' => $max, 'avg' => $average, 'trend' => $trend);

@@ -144,4 +144,25 @@ class BuoyRecord
 
         return $message;
     }
+
+    /**
+     * Get selected buoy record (in associate array)
+     *
+     * @return array
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
+    public function getBuoyRecordArray()
+    {
+        $record = [
+            '時間' => $this->recDateTime->format('[m/d H:i]'),
+            '浪高/米' => $this->recWaveHeight,
+            '浪向' => $this->recWaveDirection,
+            '週期/秒' => $this->recWavePeriod,
+            '風力/級' => $this->recWindSpeedCategory,
+            '海溫/度C' => $this->recSeaTemperature,
+            '氣溫/度C' => $this->recAirTemperature
+        ];
+
+        return $record;
+    }
 }
