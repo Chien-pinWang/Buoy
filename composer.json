@@ -1,7 +1,8 @@
 {
     "require": {
         "monolog/monolog": "^1.22",
-        "shark/simple_html_dom": "dev-master"
+        "shark/simple_html_dom": "dev-master",
+        "league/climate": "^3.2"
     },
     "autoload": {
         "psr-4": {
