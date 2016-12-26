@@ -5,31 +5,40 @@ require __DIR__ . '/vendor/autoload.php';
 use App\Buoy;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use League\CLImate\CLImate;
 
 const LOG_FILE = __DIR__ . '/tmp/Buoy.log';
-const LATEST_X_HOURS = 8;
+const LATEST_X_HOURS = 8; // Calculate trend by the LATEST_X_HOURS data
 
-$northernBuoys = ['C6AH2', '46694A', '46708A'];
-$southernBuoys = ['46761F', '46759A', '46714D', 'COMC08'];
-
-$buoys = $northernBuoys;
-
-if ($argc > 1 && strtoupper($argv[1]) == 'S') {
-    $buoys = $southernBuoys;
-}
-
+// Configure system log
 $buoyLog = new Logger('buoyLog');
 $buoyLog->pushHandler(new StreamHandler(LOG_FILE));
 
+// Invoke user selections of interested buoy stations
+$allBuoys = [
+    'C6AH2' => '富貴角浮標',
+     '46694A' => '龍洞浮標',
+     '46708A' => '龜山島浮標',
+     '46761F' => '成功浮標',
+     '46759A' => '鵝鑾鼻浮標',
+     '46714D' => '小琉球浮標',
+     'COMC08' => '彌陀浮標'
+];
+$CLI = new CLImate;
+$CLI->clear();
+$input = $CLI->checkboxes('選擇要分析的浮標資料: ', $allBuoys);
+$buoys = $input->prompt();
+$CLI->yellow('正在取得浮標資料中, 請稍候...');
+
+// Populate buoy data by iterating through all selected stations
 for ($i = 0; $i < count($buoys); $i++) {
     try {
         $buoy = new Buoy($buoys[$i]);
-        echo $buoy->getBuoyName() . PHP_EOL;
-        echo $buoy->getBuoyReport(LATEST_X_HOURS) . PHP_EOL;
+        $CLI->lightGreen($buoy->getBuoyName());
+        $CLI->out($buoy->getBuoyReport(LATEST_X_HOURS));
         $buoyLog->info('Successfully reported buoy info for ' . $buoy->getBuoyName(), array('buoyID' => $buoys[$i]));
-        // print_r($buoy->getStats(8, 'recWaveHeight'));
     } catch (\Exception $e) {
-        echo '錯誤! 無法取得浮標編號 ' . $buoys[$i] . ' 資料.' . PHP_EOL . PHP_EOL;
+        $CLI->red('錯誤: 無法取得浮標編號 ' . $buoys[$i] . ' 資料!');
         $buoyLog->error('Failed to connect to buoy data source. Error message: ' . $e->getMessage(), array('Script' => $e->getFile(), 'Line No.' => $e->getLine()));
     }
 }
