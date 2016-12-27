@@ -15,6 +15,8 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## To-do's
 
+- Implement [wikimedia/running-stat] package to run descriptive stats
+- Add more intelligence to the Trend section of the report with stats data
 
 ## Contributing
 
