@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f5339d7cb46a90ce3306fd78d4b9323b",
-    "content-hash": "d63ee29a18e68d831c87e50d05ab846e",
+    "hash": "a9f53da0c1db32d47c48e07a70bbfc56",
+    "content-hash": "d4eb3f14bed8281d36f8456e54518009",
     "packages": [
         {
             "name": "league/climate",
@@ -273,6 +273,48 @@
                 "php dom"
             ],
             "time": "2016-10-28 19:06:55"
+        },
+        {
+            "name": "wikimedia/running-stat",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wikimedia/RunningStat.git",
+                "reference": "9d7170d3eeb6f418b9f0266b2bbe6e4681ab73dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wikimedia/RunningStat/zipball/9d7170d3eeb6f418b9f0266b2bbe6e4681ab73dd",
+                "reference": "9d7170d3eeb6f418b9f0266b2bbe6e4681ab73dd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "jakub-onderka/php-parallel-lint": "^0.9.0.0",
+                "mediawiki/mediawiki-codesniffer": "^0.5.0.0",
+                "phpunit/phpunit": "4.6.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Ori Livneh",
+                    "email": "ori@wikimedia.org"
+                }
+            ],
+            "description": "PHP implementations of online statistical algorithms",
+            "homepage": "https://www.mediawiki.org/wiki/RunningStat",
+            "time": "2015-10-28 22:29:15"
         }
     ],
     "packages-dev": [],
