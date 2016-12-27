@@ -9,6 +9,7 @@ use League\CLImate\CLImate;
 
 const LOG_FILE = __DIR__ . '/tmp/Buoy.log';
 const LATEST_X_HOURS = 8; // Calculate trend by the LATEST_X_HOURS data
+const VERBOSE_LEVEL = 2; // Report verbose level, 0 ~ 3
 
 // Configure system log
 $buoyLog = new Logger('buoyLog');
@@ -40,7 +41,7 @@ for ($i = 0; $i < count($buoys); $i++) {
         // 1.2.0: Use getBuoyReportArray(LATEST_X_HOURS) to get report in 
         // array so the report can be displayed by $CLI->table formation
         // $CLI->out($buoy->getBuoyReport(LATEST_X_HOURS));
-        $CLI->table($buoy->getBuoyReportArray(LATEST_X_HOURS));
+        $CLI->table($buoy->getBuoyReportArray(LATEST_X_HOURS, VERBOSE_LEVEL));
         $buoyLog->info('Successfully reported buoy info for ' . $buoy->getBuoyName(), array('buoyID' => $buoys[$i]));
     } catch (\Exception $e) {
         $CLI->red('錯誤: 無法取得浮標編號 ' . $buoys[$i] . ' 資料!');

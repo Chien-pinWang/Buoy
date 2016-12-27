@@ -97,17 +97,17 @@ class Buoy
             $tr = $html->find('tr', $i);
             $recDate = $tr->find('td', 0)->plaintext;
             $recTime = $tr->find('td', 1)->plaintext;
-            $recWaveHeight = str_replace('&nbsp', '-', $tr->find('td', 3)->plaintext);
-            $recWaveDirection = str_replace('&nbsp', '-', $tr->find('td', 4)->plaintext);
-            $recWavePeriod = str_replace('&nbsp', '-', $tr->find('td', 5)->plaintext);
-            $recWindSpeed = str_replace('&nbsp', '-', $tr->find('td', 6)->plaintext);
-            $recWindSpeedCategory = str_replace('&nbsp', '-', $tr->find('td', 7)->plaintext);
-            $recWindDirection = str_replace('&nbsp', '-', $tr->find('td', 8)->plaintext);
-            $recGustSpeed = str_replace('&nbsp', '-', $tr->find('td', 9)->plaintext);
-            $recGustSpeedCategory = str_replace('&nbsp', '-', $tr->find('td', 10)->plaintext);
-            $recSeaTemperature = str_replace('&nbsp', '-', $tr->find('td', 11)->plaintext);
-            $recAirTemperature = str_replace('&nbsp', '-', $tr->find('td', 12)->plaintext);
-            $recAirPressure = str_replace('&nbsp', '-', $tr->find('td', 13)->plaintext);
+            $recWaveHeight = str_replace('&nbsp;', '-', $tr->find('td', 3)->plaintext);
+            $recWaveDirection = str_replace('&nbsp;', '-', $tr->find('td', 4)->plaintext);
+            $recWavePeriod = str_replace('&nbsp;', '-', $tr->find('td', 5)->plaintext);
+            $recWindSpeed = str_replace('&nbsp;', '-', $tr->find('td', 6)->plaintext);
+            $recWindSpeedCategory = str_replace('&nbsp;', '-', $tr->find('td', 7)->plaintext);
+            $recWindDirection = str_replace('&nbsp;', '-', $tr->find('td', 8)->plaintext);
+            $recGustSpeed = str_replace('&nbsp;', '-', $tr->find('td', 9)->plaintext);
+            $recGustSpeedCategory = str_replace('&nbsp;', '-', $tr->find('td', 10)->plaintext);
+            $recSeaTemperature = str_replace('&nbsp;', '-', $tr->find('td', 11)->plaintext);
+            $recAirTemperature = str_replace('&nbsp;', '-', $tr->find('td', 12)->plaintext);
+            $recAirPressure = str_replace('&nbsp;', '-', $tr->find('td', 13)->plaintext);
 
             $this->buoyRecords[] = new BuoyRecord($this, $recDate, $recTime, $recWaveHeight, $recWaveDirection, $recWavePeriod, $recWindSpeed, $recWindSpeedCategory, $recWindDirection, $recGustSpeed, $recGustSpeedCategory, $recSeaTemperature, $recAirTemperature, $recAirPressure);
 
@@ -290,7 +290,7 @@ class Buoy
             'threshold' => [
                 [ 'level' => 0.3, 'increase' => '無變化', 'decrease' => '無變化' ],
                 [ 'level' => 0.5, 'increase' => '增溫', 'decrease' => '降溫' ],
-                [ 'leve' => 'max', 'increase' => '快速增溫', 'decrease' => '快速降溫' ]
+                [ 'level' => 'max', 'increase' => '快速增溫', 'decrease' => '快速降溫' ]
             ]];
         $statsSeaTemperature['trend'] = $this->getTrend($statsSeaTemperature, $thresholdST);
 
@@ -300,7 +300,7 @@ class Buoy
             'threshold' => [
                 [ 'level' => 0.3, 'increase' => '無變化', 'decrease' => '無變化' ],
                 [ 'level' => 0.5, 'increase' => '增溫', 'decrease' => '降溫' ],
-                [ 'leve' => 'max', 'increase' => '快速增溫', 'decrease' => '快速降溫' ]
+                [ 'level' => 'max', 'increase' => '快速增溫', 'decrease' => '快速降溫' ]
             ]];
         $statsAirTemperature['trend'] = $this->getTrend($statsAirTemperature, $thresholdAT);
 
@@ -333,18 +333,21 @@ class Buoy
                 }
             }
             return $threshold['threshold'][$i-1]['increase'];
-        } else {
+        } else if ($direction == '-') {
             for ($i = 0; $i < count($threshold['threshold']); $i++) {
                 if ($stats[$threshold['attribute']] < $threshold['threshold'][$i]['level']) {
                     return $threshold['threshold'][$i]['decrease'];
                 }
             }
             return $threshold['threshold'][$i-1]['decrease'];
+        } else { // $direction == ''
+            // return $threshold['threshold'][0]['increase'];
+            return '無資料';
         }
     }
 
     /**
-     * Analyze the trend of a specific attribute
+     * Calculate statistics of the buoy data
      *
      * Calculate the min, max, average, and change direction of a given
      * attribute. An associate array of the stats is returned.
@@ -379,22 +382,38 @@ class Buoy
             }
         }
 
-        // Say its increasing if increase counts > decrease counts
-        if ($increase >= $decrease) {
+        // Say its increasing if increase counts >= decrease counts
+        if ($increase == 0) {
+            $trend = '';
+        }
+        else if ($increase >= $decrease) {
             $trend = '+';
         } else {
             $trend = '-';
         }
 
-        $stats = [
-            'min' => $rstat->min, 
-            'max' => $rstat->max, 
-            'avg' => round($rstat->getMean(), 2), 
-            'stddev' => round($rstat->getstddev(), 2), 
-            'variance' => round($rstat->getvariance(), 2),
-            'range' => round($rstat->max - $rstat->min, 2),
-            'trend' => $trend
-        ];
+        if ($rstat->getCount() > 0) {
+            $stats = [
+                'min' => $rstat->min, 
+                'max' => $rstat->max, 
+                'avg' => round($rstat->getMean(), 2), 
+                'stddev' => round($rstat->getstddev(), 2), 
+                'variance' => round($rstat->getvariance(), 2),
+                'range' => round($rstat->max - $rstat->min, 2),
+                'trend' => $trend
+            ];
+        } else {
+            $stats = [
+                'min' => '-', 
+                'max' => '-', 
+                'avg' => '-', 
+                'stddev' => '-', 
+                'variance' => '-',
+                'range' => '-',
+                'trend' => ''
+            ];
+
+        }
 
         return $stats;
     }
