@@ -341,7 +341,6 @@ class Buoy
             }
             return $threshold['threshold'][$i-1]['decrease'];
         } else { // $direction == ''
-            // return $threshold['threshold'][0]['increase'];
             return '無資料';
         }
     }
@@ -383,7 +382,7 @@ class Buoy
         }
 
         // Say its increasing if increase counts >= decrease counts
-        if ($increase == 0) {
+        if ($increase == 0 && $decrease == 0) {
             $trend = '';
         }
         else if ($increase >= $decrease) {
