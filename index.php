@@ -28,7 +28,9 @@ $CLI = new CLImate;
 $CLI->clear();
 $input = $CLI->checkboxes('選擇要分析的浮標資料: ', $allBuoys);
 $buoys = $input->prompt();
-$CLI->yellow('正在取得浮標資料中, 請稍候...');
+if (count($buoys) > 0) {
+    $CLI->yellow('正在取得浮標資料中, 請稍候...');
+}
 
 // Populate buoy data by iterating through all selected stations
 for ($i = 0; $i < count($buoys); $i++) {
