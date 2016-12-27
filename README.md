@@ -11,7 +11,7 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 - At project folder root, run `php index.php` to report the buoys at northern Taiwan.
 - A list of available buoy station names is presented. Use <space> key to select the stations of interest; <return> key to start the program.
-- Buoy data of the last 3 hours are printed, along with the stats (average, max, min, and trend) of the last 8-hour data (wave height, sea temperature, and air temperature) are printed to stdout.
+- Buoy data of the last 3 hours are printed, along with the stats (default to average and trend) of the last 8-hour data (wave height, sea temperature, and air temperature) are printed to stdout.
 
 ## To-do's
 
@@ -26,10 +26,10 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## History
 
-12/27/2016 1.2.0 Verbose level of report and better trend algorithm
-12/26/2016 1.1.1 Fix to suppress message if no buoy was selected
-12/26/2016 1.1.0 Buoy results in table format.
-12/16/2016 1.0.0 First release.
+- 12/27/2016 1.2.0 Verbose level of report and better trend algorithm
+- 12/26/2016 1.1.1 Fix to suppress message if no buoy was selected
+- 12/26/2016 1.1.0 Buoy results in table format.
+- 12/16/2016 1.0.0 First release.
 
 ## Credits
 
