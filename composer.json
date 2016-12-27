@@ -2,7 +2,8 @@
     "require": {
         "monolog/monolog": "^1.22",
         "shark/simple_html_dom": "dev-master",
-        "league/climate": "^3.2"
+        "league/climate": "^3.2",
+        "wikimedia/running-stat": "^1.1"
     },
     "autoload": {
         "psr-4": {

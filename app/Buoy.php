@@ -4,6 +4,7 @@ namespace App;
 
 use \simple_html_dom;
 use App\BuoyRecord;
+use RunningStat\RunningStat;
 
 class Buoy
 {
@@ -182,8 +183,12 @@ class Buoy
      * @return array
      * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
      */
-    function getBuoyReportArray($count)
+    public function getBuoyReportArray($count, $verbose = 1)
     {
+        // $verbose==0 reports buoy data and trend;
+        // $verbose==1 reports buoy data, average, and trend;
+        // $verbose==2 reports buoy data, average, max, min, and trend
+        // $verbose==3 reports everthing in 2, stddev, variation, and range
         // Report the latest $count hours of buoy data
         $report = array();
         for ($i = 0; $i < 3; $i++) {
@@ -203,33 +208,102 @@ class Buoy
             '海溫/度C' => '',
             '氣溫/度C' => ''
         ];
-        $report[] = [
-            '時間' => '平均',
-            '浪高/米' => $statsWaveHeight['avg'],
-            '浪向' => '',
-            '週期/秒' => '',
-            '風力/級' => '',
-            '海溫/度C' => $statsSeaTemperature['avg'],
-            '氣溫/度C' => $statsAirTemperature['avg']
-        ];
-        $report[] = [
-            '時間' => '最大',
-            '浪高/米' => $statsWaveHeight['max'],
-            '浪向' => '',
-            '週期/秒' => '',
-            '風力/級' => '',
-            '海溫/度C' => $statsSeaTemperature['max'],
-            '氣溫/度C' => $statsAirTemperature['max']
-        ];
-        $report[] = [
-            '時間' => '最小',
-            '浪高/米' => $statsWaveHeight['min'],
-            '浪向' => '',
-            '週期/秒' => '',
-            '風力/級' => '',
-            '海溫/度C' => $statsSeaTemperature['min'],
-            '氣溫/度C' => $statsAirTemperature['min']
-        ];
+
+        // $verbose determines the detail level of the report
+        if ($verbose > 0) {
+            $report[] = [
+                '時間' => '平均',
+                '浪高/米' => $statsWaveHeight['avg'],
+                '浪向' => '',
+                '週期/秒' => '',
+                '風力/級' => '',
+                '海溫/度C' => $statsSeaTemperature['avg'],
+                '氣溫/度C' => $statsAirTemperature['avg']
+            ];
+        }
+        if ($verbose > 1) {
+            $report[] = [
+                '時間' => '最大',
+                '浪高/米' => $statsWaveHeight['max'],
+                '浪向' => '',
+                '週期/秒' => '',
+                '風力/級' => '',
+                '海溫/度C' => $statsSeaTemperature['max'],
+                '氣溫/度C' => $statsAirTemperature['max']
+            ];
+            $report[] = [
+                '時間' => '最小',
+                '浪高/米' => $statsWaveHeight['min'],
+                '浪向' => '',
+                '週期/秒' => '',
+                '風力/級' => '',
+                '海溫/度C' => $statsSeaTemperature['min'],
+                '氣溫/度C' => $statsAirTemperature['min']
+            ];
+        }
+        if ($verbose > 2) {
+            $report[] = [
+                '時間' => '標準差',
+                '浪高/米' => $statsWaveHeight['stddev'],
+                '浪向' => '',
+                '週期/秒' => '',
+                '風力/級' => '',
+                '海溫/度C' => $statsSeaTemperature['stddev'],
+                '氣溫/度C' => $statsAirTemperature['stddev']
+            ];
+            $report[] = [
+                '時間' => '變異數',
+                '浪高/米' => $statsWaveHeight['variance'],
+                '浪向' => '',
+                '週期/秒' => '',
+                '風力/級' => '',
+                '海溫/度C' => $statsSeaTemperature['variance'],
+                '氣溫/度C' => $statsAirTemperature['variance']
+            ];
+            $report[] = [
+                '時間' => '範圍',
+                '浪高/米' => $statsWaveHeight['range'],
+                '浪向' => '',
+                '週期/秒' => '',
+                '風力/級' => '',
+                '海溫/度C' => $statsSeaTemperature['range'],
+                '氣溫/度C' => $statsAirTemperature['range']
+            ];
+        }
+
+        // Trend is determined by sign-based direction
+        // emphasized by 'attribute'
+        //
+        // Determine wave height trend
+        $thresholdWH = [
+            'attribute' => 'stddev',
+            'threshold' => [
+                [ 'level' => 0.3, 'increase' => '無變化', 'decrease' => '無變化' ],
+                [ 'level' => 0.5, 'increase' => '起浪', 'decrease' => '消退' ],
+                [ 'level' => 'max', 'increase' => '快速起浪', 'decrease' => '快速消退']
+            ]];
+        $statsWaveHeight['trend'] = $this->getTrend($statsWaveHeight, $thresholdWH);
+
+        // Determine sea temperature trend
+        $thresholdST = [
+            'attribute' => 'stddev',
+            'threshold' => [
+                [ 'level' => 0.3, 'increase' => '無變化', 'decrease' => '無變化' ],
+                [ 'level' => 0.5, 'increase' => '增溫', 'decrease' => '降溫' ],
+                [ 'leve' => 'max', 'increase' => '快速增溫', 'decrease' => '快速降溫' ]
+            ]];
+        $statsSeaTemperature['trend'] = $this->getTrend($statsSeaTemperature, $thresholdST);
+
+        // Determine air temperature trend
+        $thresholdAT = [
+            'attribute' => 'stddev',
+            'threshold' => [
+                [ 'level' => 0.3, 'increase' => '無變化', 'decrease' => '無變化' ],
+                [ 'level' => 0.5, 'increase' => '增溫', 'decrease' => '降溫' ],
+                [ 'leve' => 'max', 'increase' => '快速增溫', 'decrease' => '快速降溫' ]
+            ]];
+        $statsAirTemperature['trend'] = $this->getTrend($statsAirTemperature, $thresholdAT);
+
         $report[] = [
             '時間' => '趨勢',
             '浪高/米' => $statsWaveHeight['trend'],
@@ -244,6 +318,32 @@ class Buoy
     }
 
     /**
+     * Determine the trend of change modified by stats attribute
+     *
+     * @return string
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
+    private function getTrend($stats, $threshold)
+    {
+        $direction = $stats['trend'];
+        if ($direction == '+') {
+            for ($i = 0; $i < count($threshold['threshold']); $i++) {
+                if ($stats[$threshold['attribute']] < $threshold['threshold'][$i]['level']) {
+                    return $threshold['threshold'][$i]['increase'];
+                }
+            }
+            return $threshold['threshold'][$i-1]['increase'];
+        } else {
+            for ($i = 0; $i < count($threshold['threshold']); $i++) {
+                if ($stats[$threshold['attribute']] < $threshold['threshold'][$i]['level']) {
+                    return $threshold['threshold'][$i]['decrease'];
+                }
+            }
+            return $threshold['threshold'][$i-1]['decrease'];
+        }
+    }
+
+    /**
      * Analyze the trend of a specific attribute
      *
      * Calculate the min, max, average, and change direction of a given
@@ -254,51 +354,47 @@ class Buoy
      */
     private function getStats($count, $attribute) 
     {
-        $min = 0;
-        $max = 0;
-        $average = 0;
         $increase = 0;
         $decrease = 0;
-        $total = 0;
-        $countable = 0;
 
+        $rstat = new RunningStat();
         for ($i = 0; $i < $count; $i++) {
             $value = $this->buoyRecords[$i]->$attribute;
             if (is_numeric($value)) {
+                $rstat->addObservation($value);
+
+                // Determine trend, establish counts
+                // Simple algorithm by comparing increase and decrease counts
                 if (!isset($lastValue)) {
                     $lastValue = $value;
-                    $min = $value;
-                    $max = $value;
                 } else {
                     if ($value >= $lastValue) {
                         $decrease++;
-                        if ($value > $max) {
-                            $max = $value;
-                        }
                     } else {
                         $increase++;
-                        if ($value < $min) {
-                            $min = $value;
-                        }
                     }
-                    $lastValue = $value;
                 }
-                $total += $value;
-                $countable++;
+                $lastValue = $value;
+
             }
         }
 
-        if ($countable > 0) {
-            $average = round($total / $countable, 2);
-        }
-
+        // Say its increasing if increase counts > decrease counts
         if ($increase >= $decrease) {
-            $trend = '漸增';
+            $trend = '+';
         } else {
-            $trend = '漸減';
+            $trend = '-';
         }
 
-        $stats = array('min' => $min, 'max' => $max, 'avg' => $average, 'trend' => $trend);
+        $stats = [
+            'min' => $rstat->min, 
+            'max' => $rstat->max, 
+            'avg' => round($rstat->getMean(), 2), 
+            'stddev' => round($rstat->getstddev(), 2), 
+            'variance' => round($rstat->getvariance(), 2),
+            'range' => round($rstat->max - $rstat->min, 2),
+            'trend' => $trend
+        ];
 
         return $stats;
     }
