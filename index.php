@@ -31,6 +31,7 @@ $input = $CLI->checkboxes('選擇要分析的浮標資料: ', $allBuoys);
 $buoys = $input->prompt();
 if (count($buoys) > 0) {
     $CLI->yellow('正在取得浮標資料中, 請稍候...');
+    $CLI->border('~', 77);
 }
 
 // Populate buoy data by iterating through all selected stations
