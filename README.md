@@ -15,6 +15,7 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## To-do's
 
+- [ ] [Issue #1](https://github.com/Chien-pinWang/Buoy/issues/1): Select and report one buoy at a time
 
 ## Contributing
 
