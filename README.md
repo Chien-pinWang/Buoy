@@ -29,6 +29,7 @@ Buoy is a command line application that reports and analyze data collected by bu
 ## History
 
 - 1/3/2017   1.2.1 Select and show one buoy report at a time
+- 12/27/2016 1.2.1 Bug fix on trend testing condition.
 - 12/27/2016 1.2.0 Verbose level of report and better trend algorithm
 - 12/26/2016 1.1.1 Fix to suppress message if no buoy was selected
 - 12/26/2016 1.1.0 Buoy results in table format.
