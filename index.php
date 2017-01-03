@@ -18,17 +18,6 @@ $buoyLog->pushHandler(new StreamHandler(LOG_FILE));
 // Invoke user selections of interested buoy stations
 
 function getUserInput(CLImate $CLI) {
-/**
-    $allBuoys = [
-        'C6AH2' => '富貴角浮標',
-        '46694A' => '龍洞浮標',
-        '46708A' => '龜山島浮標',
-        '46761F' => '成功浮標',
-        '46759A' => '鵝鑾鼻浮標',
-        '46714D' => '小琉球浮標',
-        'COMC08' => '彌陀浮標'
-    ];
- */
     $allBuoys = [
         '富貴角浮標' => 'C6AH2',
         '龍洞浮標' => '46694A',
@@ -36,20 +25,14 @@ function getUserInput(CLImate $CLI) {
         '成功浮標' => '46761F',
         '鵝鑾鼻浮標' => '46759A',
         '小琉球浮標' => '46714D',
-        '彌陀浮標' => 'COMC08',
-        '[結束程式]' => '__END__'
+        '彌陀浮標' => 'COMC08'
     ];
     $CLI->clear();
     $input = $CLI->radio('選擇要分析的浮標資料: ', array_keys($allBuoys));
     $buoyName = $input->prompt();
-    $buoyID = $allBuoys[$buoyName];
-    if ($buoyID == '__END__') {
-        exit();
-    } else {
-        $CLI->yellow('正在取得浮標資料中, 請稍候...');
-        $CLI->border('~', 77);
-        return $buoyID;
-    }
+    $CLI->yellow('正在取得浮標資料中, 請稍候...');
+    $CLI->border('~', 77);
+    return $allBuoys[$buoyName];
 }
 
 $CLI = new CLImate;
