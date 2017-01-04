@@ -30,9 +30,13 @@ function getUserInput(CLImate $CLI) {
     $CLI->clear();
     $input = $CLI->radio('選擇要分析的浮標資料: ', array_keys($allBuoys));
     $buoyName = $input->prompt();
-    $CLI->yellow('正在取得浮標資料中, 請稍候...');
-    $CLI->border('~', 77);
-    return $allBuoys[$buoyName];
+    if ($buoyName) {
+        $CLI->yellow('正在取得浮標資料中, 請稍候...');
+        $CLI->border('~', 77);
+        return $allBuoys[$buoyName];
+    } else {
+        exit();
+    }
 }
 
 $CLI = new CLImate;
