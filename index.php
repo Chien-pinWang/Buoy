@@ -5,15 +5,19 @@ require __DIR__ . '/vendor/autoload.php';
 use App\Buoy;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\NativeMailerHandler;
 use League\CLImate\CLImate;
 
 const LOG_FILE = __DIR__ . '/tmp/Buoy.log';
 const LATEST_X_HOURS = 8; // Calculate trend by the LATEST_X_HOURS data
 const VERBOSE_LEVEL = 2; // Report verbose level, 0 ~ 3
+const LOG_MAIL_TO = 'Wang.ChienPin@gmail.com';
+const LOG_MAIL_FROM = 'Wang.ChienPin@gmail.com';
 
 // Configure system log
 $buoyLog = new Logger('buoyLog');
 $buoyLog->pushHandler(new StreamHandler(LOG_FILE));
+$buoyLog->pushHandler(new NativeMailerHandler(LOG_MAIL_TO, 'Error from Buoy App', LOG_MAIL_FROM));
 
 // Invoke user selections of interested buoy stations
 
@@ -41,8 +45,7 @@ function getUserInput(CLImate $CLI) {
 
 $CLI = new CLImate;
 
-// Populate buoy data by iterating through all selected stations
-// for ($i = 0; $i < count($buoys); $i++) {
+// Populate buoy data if continue to choose other buoy station
 while ($buoyID = getUserInput($CLI)) {
     try {
         $buoy = new Buoy($buoyID);
@@ -52,12 +55,13 @@ while ($buoyID = getUserInput($CLI)) {
         // $CLI->out($buoy->getBuoyReport(LATEST_X_HOURS));
         $CLI->table($buoy->getBuoyReportArray(LATEST_X_HOURS, VERBOSE_LEVEL));
         $buoyLog->info('Successfully reported buoy info for ' . $buoy->getBuoyName(), array('buoyID' => $buoyID));
-        $confirm = $CLI->yellow()->confirm('選擇其他浮標?');
-        if (!$confirm->confirmed()) {
-            break;
-        }
     } catch (\Exception $e) {
         $CLI->red('錯誤: 無法取得浮標編號 ' . $buoyID . ' 資料!');
         $buoyLog->error('Failed to connect to buoy data source. Error message: ' . $e->getMessage(), array('Script' => $e->getFile(), 'Line No.' => $e->getLine()));
+    }
+
+    $confirm = $CLI->yellow()->confirm('選擇其他浮標?');
+    if (!$confirm->confirmed()) {
+        break;
     }
 }

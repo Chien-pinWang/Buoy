@@ -18,6 +18,7 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 - [x] [Issue #1](https://github.com/Chien-pinWang/Buoy/issues/1): Select and report one buoy at a time
 - [x] [Issue #2](https://github.com/Chien-pinWang/Buoy/issues/2): Show PHP error when no buoy was selected
+- [x] [Issue #3](https://github.com/Chien-pinWang/Buoy/issues/3): Add a mail handler to logger for Error level log
 
 ## Contributing
 
@@ -29,6 +30,7 @@ Buoy is a command line application that reports and analyze data collected by bu
 
 ## History
 
+- 01/06/2017 1.3.0 Added a mail log handler if log level >= Error
 - 01/03/2017 1.2.2 Select and show one buoy report at a time
 - 12/27/2016 1.2.1 Bug fix on trend testing condition.
 - 12/27/2016 1.2.0 Verbose level of report and better trend algorithm
