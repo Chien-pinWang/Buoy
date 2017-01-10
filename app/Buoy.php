@@ -2,9 +2,9 @@
 
 namespace App;
 
-use \simple_html_dom;
 use App\BuoyRecord;
 use RunningStat\RunningStat;
+use GuzzleHttp\Client;
 
 class Buoy
 {
@@ -49,21 +49,17 @@ class Buoy
         $this->buoyID = $buoyID;
         $buoyURL = Buoy::BUOY_URL_PREFIX . $this->buoyID . '.html';
 
-        // Suppress PHP connection failure warning by setting error
-        // handler with a null function and test connectivity to the
-        // URL. This is to prevent simple_html_dom being fooled by
-        // checking the latest PHP error.
-        set_error_handler(function (){
-        
-        }, E_ALL);
-        $connectivity = @file_get_contents($buoyURL);
-        restore_error_handler();
-        if (!$connectivity) {
-            throw new \Exception('Failed to connect to buoy data source at ' . $buoyURL);
+        $client = new Client(['base_uri' => BUOY::BUOY_URL_PREFIX]);
+        $response = $client->request('GET', $this->buoyID . '.html');
+        $connectStatus = $response->getStatusCode();
+        if ($connectStatus != '200') {
+            throw new \Exception('Failed to connect to buoy data source at ' . $buoyURL . ' with status code: ' . $connectStatus);
         } else {
-            $html = new simple_html_dom($buoyURL);
-            $this->buoyName = mb_substr($html->find('title', 0)->plaintext, 0, mb_strpos($html->find('title', 0)->plaintext, '資料'));
-            $this->loadBuoyRecords($html);
+            $dom = new \DOMDocument;
+            $dom->loadHTML($response->getBody()->getContents());
+            $domTitle = $dom->getElementsByTagName('title')[0]->nodeValue;
+            $this->buoyName = mb_substr($domTitle, 0, mb_strpos($domTitle, '資料'));
+            $this->loadBuoyRecords($dom);
         }
     }
 
@@ -88,10 +84,11 @@ class Buoy
      * Buoy data is fetched and parsed to BuoyRecord object and
      * added to the buoyRecords array.
      *
+     * @deprecated since 1.3.1 replaced by DOMDocument for performance
      * @return void
      * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
      */
-    public function loadBuoyRecords(simple_html_dom $html)
+    public function x_loadBuoyRecords(simple_html_dom $html)
     {
         for ($i = 2; $i < Buoy::MAX_RECORDS + 2; $i++) {
             $tr = $html->find('tr', $i);
@@ -110,11 +107,48 @@ class Buoy
             $recAirPressure = str_replace('&nbsp;', '-', $tr->find('td', 13)->plaintext);
 
             $this->buoyRecords[] = new BuoyRecord($this, $recDate, $recTime, $recWaveHeight, $recWaveDirection, $recWavePeriod, $recWindSpeed, $recWindSpeedCategory, $recWindDirection, $recGustSpeed, $recGustSpeedCategory, $recSeaTemperature, $recAirTemperature, $recAirPressure);
-
         }
 
         // clear the simple_dom_html object to free up memory
         $html->clear();
+    }
+
+    /**
+     * Load buoyRecords with data from CWB web site.
+     *
+     * Buoy data is fetched and parsed to BuoyRecord object and
+     * added to the buoyRecords array.
+     *
+     * @return void
+     * @author Chien-pin Wang <Wang.ChienPin@gmail.com>
+     */
+    public function loadBuoyRecords(\DOMDocument $dom)
+    {
+        $table = $dom->getElementsByTagName('table')[0];
+        $tableRows = $table->getElementsByTagName('tr');
+        foreach ($tableRows as $tableRow) {
+            $tds = $tableRow->getElementsByTagName('td');
+            if ($tds->length > 0) {
+                $recDate = $tds[0]->nodeValue;
+                $recTime = $tds[1]->nodeValue;
+                $recWaveHeight = str_replace('&nbsp;', '-', $tds[3]->nodeValue);
+                $recWaveDirection = str_replace('&nbsp;', '-', $tds[4]->nodeValue);
+                $recWavePeriod = str_replace('&nbsp;', '-', $tds[5]->nodeValue);
+                $recWindSpeed = str_replace('&nbsp;', '-', $tds[6]->nodeValue);
+                $recWindSpeedCategory = str_replace('&nbsp;', '-', $tds[7]->nodeValue);
+                $recWindDirection = str_replace('&nbsp;', '-', $tds[8]->nodeValue);
+                $recGustSpeed = str_replace('&nbsp;', '-', $tds[9]->nodeValue);
+                $recGustSpeedCategory = str_replace('&nbsp;', '-', $tds[10]->nodeValue);
+                $recSeaTemperature = str_replace('&nbsp;', '-', $tds[11]->nodeValue);
+                $recAirTemperature = str_replace('&nbsp;', '-', $tds[12]->nodeValue);
+                $recAirPressure = str_replace('&nbsp;', '-', $tds[13]->nodeValue);
+
+                $this->buoyRecords[] = new BuoyRecord($this, $recDate, $recTime, $recWaveHeight, $recWaveDirection, $recWavePeriod, $recWindSpeed, $recWindSpeedCategory, $recWindDirection, $recGustSpeed, $recGustSpeedCategory, $recSeaTemperature, $recAirTemperature, $recAirPressure);
+            }
+        }
+
+        // clear the dom object to free up memory
+        unset($dom);
     }
 
     /**

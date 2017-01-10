@@ -17,10 +17,9 @@ const LOG_MAIL_FROM = 'Wang.ChienPin@gmail.com';
 // Configure system log
 $buoyLog = new Logger('buoyLog');
 $buoyLog->pushHandler(new StreamHandler(LOG_FILE));
-$buoyLog->pushHandler(new NativeMailerHandler(LOG_MAIL_TO, 'Error from Buoy App', LOG_MAIL_FROM));
+$buoyLog->pushHandler(new NativeMailerHandler(LOG_MAIL_TO, 'Error from Buoy@My-MacBook-Air', LOG_MAIL_FROM));
 
 // Invoke user selections of interested buoy stations
-
 function getUserInput(CLImate $CLI) {
     $allBuoys = [
         '富貴角浮標' => 'C6AH2',
