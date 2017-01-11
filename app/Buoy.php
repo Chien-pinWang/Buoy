@@ -5,6 +5,8 @@ namespace App;
 use App\BuoyRecord;
 use RunningStat\RunningStat;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\RequestException;
 
 class Buoy
 {
@@ -50,17 +52,29 @@ class Buoy
         $buoyURL = Buoy::BUOY_URL_PREFIX . $this->buoyID . '.html';
 
         $client = new Client(['base_uri' => BUOY::BUOY_URL_PREFIX]);
-        $response = $client->request('GET', $this->buoyID . '.html');
-        $connectStatus = $response->getStatusCode();
-        if ($connectStatus != '200') {
-            throw new \Exception('Failed to connect to buoy data source at ' . $buoyURL . ' with status code: ' . $connectStatus);
-        } else {
+        try {
+            $response = $client->request('GET', $this->buoyID . '.html');
             $dom = new \DOMDocument;
             $dom->loadHTML($response->getBody()->getContents());
             $domTitle = $dom->getElementsByTagName('title')[0]->nodeValue;
             $this->buoyName = mb_substr($domTitle, 0, mb_strpos($domTitle, '資料'));
             $this->loadBuoyRecords($dom);
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                throw new \Exception(Psr7\str($e->getResponse()));
+            }
+            throw new \Exception(Psr7\str($e->getRequest()));
         }
+        // $connectStatus = $response->getStatusCode();
+        // if ($connectStatus != '200') {
+        //     throw new \Exception('Failed to connect to buoy data source at ' . $buoyURL . ' with status code: ' . $connectStatus);
+        // } else {
+        //     $dom = new \DOMDocument;
+        //     $dom->loadHTML($response->getBody()->getContents());
+        //     $domTitle = $dom->getElementsByTagName('title')[0]->nodeValue;
+        //     $this->buoyName = mb_substr($domTitle, 0, mb_strpos($domTitle, '資料'));
+        //     $this->loadBuoyRecords($dom);
+        // }
     }
 
     /**

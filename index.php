@@ -8,7 +8,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\NativeMailerHandler;
 use League\CLImate\CLImate;
 
-const LOG_FILE = __DIR__ . '/tmp/Buoy.log';
+const LOG_FILE = __DIR__ . '/var/Buoy.log';
 const LATEST_X_HOURS = 8; // Calculate trend by the LATEST_X_HOURS data
 const VERBOSE_LEVEL = 2; // Report verbose level, 0 ~ 3
 const LOG_MAIL_TO = 'Wang.ChienPin@gmail.com';
