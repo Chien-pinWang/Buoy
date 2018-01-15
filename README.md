@@ -5,6 +5,8 @@ Buoy is a command line application that reports and analyze data collected by bu
 ## Installation
 
 - `git clone` this project to your local file directory
+- `cd <Buoy Directory>` change to the Buoy directory where composer.json
+  resides
 - Run `composer install` to get required components from Packagist.
 
 ## Usage
