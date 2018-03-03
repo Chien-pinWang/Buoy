@@ -1,6 +1,6 @@
 # Buoy
 
-Buoy is a command line application that reports and analyze data collected by buoys around Taiwan.
+Buoy is a command line php application that reports and analyze data collected by buoys around Taiwan.
 
 ## Installation
 
